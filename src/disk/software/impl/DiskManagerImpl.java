@@ -11,7 +11,16 @@ import myUtil.Number;
 
 public class DiskManagerImpl implements DiskManager{
 
-	private DiskOS diskOS = new DiskOS();
+
+	private DiskOS diskOS;
+	public DiskOS getDiskOS() {
+		return diskOS;
+	}
+
+	public void setDiskOS(DiskOS diskOS) {
+		this.diskOS = diskOS;
+	}
+
 	@Override
 	public int getFreeBlockPos() {
 		// TODO Auto-generated method stub
@@ -41,20 +50,24 @@ public class DiskManagerImpl implements DiskManager{
 	@Override
 	public boolean isEnoughBlock(byte[] file) {
 		int len=file.length/64+1;
-		if(len>=getFreeBlockNum()) {
+		if(len<=getFreeBlockNum()) {
 			return true;
 		}else
 		return false;
 	}
 	@Override
-	public int storeFile(byte[] file) {
+	public void storeFile(int start,byte[] file) {
 		// TODO Auto-generated method stub
 		/**
 		 * 存取数据的时候去fat表查找适合的空间将数据放进磁盘
 		 * 无论如何一定会占用一个块磁盘
 		 * 
 		 */
-		int startPos;
+		byte [] fatItem=diskOS.getFatTable().getFatItem();
+		if(file == null) {
+			fatItem[start]=-1;
+			return;
+		}
 		int last;
 		int pos;
 		int wp=0; //写指针
@@ -62,10 +75,9 @@ public class DiskManagerImpl implements DiskManager{
 		int len = file.length;
 		Disk disk = diskOS.getDisk();
 		DiskBlock diskBlock[] =disk.getDisk();
-		byte [] fatItem=diskOS.getFatTable().getFatItem();
 		//无论如何都需要占用一块内存然后初分配
 		//初分配如果不够需要更多的块构成链表
-		startPos = last = pos = getFreeBlockPos();
+		last = pos = start;
 		fatItem[pos]=-1; //假设只有一块
 		int times=remain;
 		for(int i=0;i<Math.min(times,64);i++) {
@@ -86,8 +98,8 @@ public class DiskManagerImpl implements DiskManager{
 			}
 		}
 		fatItem[pos]=-1;
-		return startPos;
 	}
+
 	/**
 	 * 给定FAT的起点和文件的长度
 	 * 将文件读取出来成流式文件
@@ -128,7 +140,9 @@ public class DiskManagerImpl implements DiskManager{
 			pos = Number.byteToInt(fat[pos]);
 		}
 	}
-
+	/**
+	 * 获取b磁盘下的空余目录项下标
+	 */
 	@Override
 	public int getFreeStructPos(int bnum) {
 		// TODO Auto-generated method stub
@@ -139,6 +153,35 @@ public class DiskManagerImpl implements DiskManager{
 			}
 		}
 		return -1;
+	}
+
+	/**
+	 * 通过名字查询文件目录项位置
+	 */
+ 	@Override
+	public int getStructPos(int bnum, String name) {
+		// TODO Auto-generated method stub
+		for(int i=0;i<8;i+=8) {
+			FileStruct fileStruct=getFileStruct(bnum, i);
+			if(fileStruct.getName().equals(name)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+ 	/**
+ 	 * 通过名字查询得到文件目录项
+ 	 */
+	@Override
+	public FileStruct getFileStructByName(int bnum, String name) {
+		// TODO Auto-generated method stub
+		for(int i=0;i<8;i+=8) {
+			FileStruct fileStruct=getFileStruct(bnum, i);
+			if(fileStruct.getName().equals(name)) {
+				return fileStruct;
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -187,7 +230,9 @@ public class DiskManagerImpl implements DiskManager{
 		System.out.println("hello"+file2.getName()+" "+file2.getType()+" "+file2.getFileAttribute());
 	}
 	
-	
+	/**
+	 * 删除文件目录项
+	 */
 	@Override
 	public void delStruct(int bnum, int pnum, FileStruct fileStruct) {
 		// TODO Auto-generated method stub
@@ -195,7 +240,9 @@ public class DiskManagerImpl implements DiskManager{
 			diskOS.getDisk().getDisk()[bnum].getDiskblock()[pnum+i]="$".getBytes()[0];
 		}
 	}
-
+	/**
+	 * 通过位置得到文件目录项
+	 */
 	@Override
 	public FileStruct getFileStruct(int bnum, int pnum) {
 		// TODO Auto-generated method stub
@@ -208,9 +255,32 @@ public class DiskManagerImpl implements DiskManager{
 				disk[pnum+3]
 		}));
 		fileStruct.setFileAttribute(disk[pnum+4]);
-		fileStruct.setStartPos(disk[5]);
-		short x = (short)((short)disk[7]<<8+(short)disk[6]);
+		fileStruct.setStartPos(disk[pnum+5]);
+		short x =(short)(disk[pnum+7]*256+disk[pnum+6]);
 		fileStruct.setFileLength(x);
 		return fileStruct;
+	}
+	/**
+	 * 更新文件目录项内容
+	 */
+	@Override
+	public boolean updateFileStruct(int bnum,FileStruct fileStruct) {
+		// TODO Auto-generated method stub
+		int pnum=getStructPos(bnum, fileStruct.getName());
+		if(pnum==-1)return false;
+		byte[] fileByte=new byte[]{
+				fileStruct.getName().getBytes()[0],
+				fileStruct.getName().getBytes()[1],
+				fileStruct.getName().getBytes()[2],
+				fileStruct.getType().getBytes()[0],
+				fileStruct.getFileAttribute(),
+				fileStruct.getStartPos(),
+				(byte)(fileStruct.getFileLength()),
+				(byte)(fileStruct.getFileLength()>>8)
+		};
+		for(int i =0;i<8;i++) {
+				diskOS.getDisk().getDisk()[bnum].getDiskblock()[pnum+i]=fileByte[i];
+		}
+		return true;
 	}
 }
