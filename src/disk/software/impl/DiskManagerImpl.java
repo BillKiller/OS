@@ -135,9 +135,11 @@ public class DiskManagerImpl implements DiskManager{
 		// TODO Auto-generated method stub
 		int pos=start;
 		byte []fat = diskOS.getFatTable().getFatItem();
+		int last = pos;
 		while(pos!=255) {
-			fat[pos]=0;
 			pos = Number.byteToInt(fat[pos]);
+			fat[last]=0;
+			last = pos;
 		}
 	}
 	/**
@@ -161,7 +163,7 @@ public class DiskManagerImpl implements DiskManager{
  	@Override
 	public int getStructPos(int bnum, String name) {
 		// TODO Auto-generated method stub
-		for(int i=0;i<8;i+=8) {
+		for(int i=0;i<64;i+=8) {
 			FileStruct fileStruct=getFileStruct(bnum, i);
 			if(fileStruct.getName().equals(name)) {
 				return i;
@@ -175,7 +177,7 @@ public class DiskManagerImpl implements DiskManager{
 	@Override
 	public FileStruct getFileStructByName(int bnum, String name) {
 		// TODO Auto-generated method stub
-		for(int i=0;i<8;i+=8) {
+		for(int i=0;i<64;i+=8) {
 			FileStruct fileStruct=getFileStruct(bnum, i);
 			if(fileStruct.getName().equals(name)) {
 				return fileStruct;
@@ -200,6 +202,12 @@ public class DiskManagerImpl implements DiskManager{
 		 * 长度[0] 低位
 		 * 长度[1] 高位
 		 */
+		if(fileStruct.getName().length()==1) {
+			fileStruct.setName("  "+fileStruct.getName());
+		}
+		if(fileStruct.getName().length()==2) {
+			fileStruct.setName(" "+fileStruct.getName());
+		}
 		byte[] fileByte=new byte[]{
 			fileStruct.getName().getBytes()[0],
 			fileStruct.getName().getBytes()[1],
@@ -258,7 +266,19 @@ public class DiskManagerImpl implements DiskManager{
 		fileStruct.setStartPos(disk[pnum+5]);
 		short x =(short)(disk[pnum+7]*256+disk[pnum+6]);
 		fileStruct.setFileLength(x);
+		fileStruct.setName(fileStruct.getName().trim());
 		return fileStruct;
+	}
+	public boolean isFileStructExist(FileStruct fileStruct) {
+		if(fileStruct == null) {
+			return false;
+		}else {
+			if(fileStruct.getName().startsWith("$")) {
+				return false;
+			}else {
+				return true;
+			}
+		}
 	}
 	/**
 	 * 更新文件目录项内容
@@ -283,4 +303,5 @@ public class DiskManagerImpl implements DiskManager{
 		}
 		return true;
 	}
+
 }

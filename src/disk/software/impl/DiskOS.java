@@ -18,5 +18,4 @@ public class DiskOS {
 	public void setDisk(Disk disk) {
 		this.disk = disk;
 	}
-	
 }

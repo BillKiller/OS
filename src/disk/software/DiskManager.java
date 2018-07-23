@@ -32,4 +32,5 @@ public interface DiskManager {
 	public FileStruct getFileStruct(int bnum,int pnum);
 	public FileStruct getFileStructByName(int bnum,String name);
 	public boolean updateFileStruct(int bnum,FileStruct fileStruct);
+	public boolean isFileStructExist(FileStruct fileStruct);
 }

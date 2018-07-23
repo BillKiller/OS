@@ -9,6 +9,9 @@ import myUtil.Number;
 public class FAT {
 	private byte[] fatItem=new byte[Number.lenOfDisk];
 
+	public FAT() {
+		fatItem[4]=-1;
+	}
 	public byte[] getFatItem() {
 		return fatItem;
 	}

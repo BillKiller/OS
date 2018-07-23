@@ -1,8 +1,5 @@
 package disk.software.impl;
 
-import org.junit.Test;
-
-import disk.hardware.FAT;
 import disk.hardware.FileStruct;
 import disk.software.DiskManager;
 import disk.software.FileOS;
@@ -84,32 +81,12 @@ public class FileOSImpl implements FileOS{
 			return false;
 		}	
 	}
-	/*
-	public void test() {
-		DiskOS diskOS = new DiskOS();//开机
-		diskManagerImpl = new DiskManagerImpl();
-		diskManagerImpl.setDiskOS(diskOS);
-		String context="i am heeeeeee";
-		diskOS.getFatTable().getFatItem()[4]=1;
-		byte[]data=context.getBytes();
-		create_file(4, "abc", "c", 0);
-	
-		if(write_file(4,"abc",data)) {
-			System.out.println("w ok");
-		}else {
-			System.out.println("w err");
-		}
-		byte[]disk =diskOS.getDisk().getDisk()[4].getDiskblock();
-		for(int i=0;i<16;i++) {
-			System.out.println(disk[i]);
-		}
-		FileStruct temp = diskManagerImpl.getFileStructByName(4, "abc");
-		System.out.println(temp.getFileLength());
-		byte[] read=read_file(temp);
-		String s=new String(read);
-		System.out.println(s);
+	public DiskManager getDiskManagerImpl() {
+		return diskManagerImpl;
 	}
-	*/
+	public void setDiskManagerImpl(DiskManager diskManagerImpl) {
+		this.diskManagerImpl = diskManagerImpl;
+	}
 	@Override
 	public boolean close_file(int bnum, String name) {
 		// TODO Auto-generated method stub
@@ -120,8 +97,8 @@ public class FileOSImpl implements FileOS{
 	public boolean delete_file(int bnum, String name) {
 		// TODO Auto-generated method stub
 		int pnum = diskManagerImpl.getStructPos(bnum, name);
-		FileStruct fileStruct = diskManagerImpl.getFileStructByName(bnum, name);
 		if(pnum ==-1)return false;
+		FileStruct fileStruct = diskManagerImpl.getFileStructByName(bnum, name);
 		diskManagerImpl.removeFile(fileStruct.getStartPos());
 		diskManagerImpl.delStruct(bnum, pnum, fileStruct);
 		return true;
@@ -129,6 +106,7 @@ public class FileOSImpl implements FileOS{
 	@Override
 	public boolean typef_file(int bnum, String name) {
 		// TODO Auto-generated method stub
+		
 		return false;
 	}
 	@Override
