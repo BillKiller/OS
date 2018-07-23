@@ -14,6 +14,9 @@ public class PCB {
 	private int pc;
 	private int  ir;
 	private long pid;
+	//进程在内存的位置
+	private long startPos; //start代表起点
+	private long length; //length代表这个进程的大小
 
 	public int getId() {
 		return id;
