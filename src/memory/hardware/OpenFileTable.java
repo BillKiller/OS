@@ -1,4 +1,4 @@
-package disk.hardware;
+package memory.hardware;
 
 import java.util.ArrayList;
 

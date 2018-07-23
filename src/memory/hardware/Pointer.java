@@ -1,4 +1,4 @@
-package disk.hardware;
+package memory.hardware;
 /**
  * 读写指针
  * 是文件打开表的结构之一
