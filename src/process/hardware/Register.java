@@ -1,11 +1,10 @@
 package process.hardware;
 
 public class Register {
-	
-	private int ax;//存放数据x的值
-	private int psw;//程序状态
-	private int pc;//程序计数器，计算做到第几步
-	private int ir;//指令寄存器
+	private int ax;//保存x的值ֵ
+	private int psw;//程序状态字״̬
+	private int pc;//指向指令所在位置
+	private int ir;//ָ保存执行指令
 	
 	
 	public int getAx() {
@@ -33,5 +32,5 @@ public class Register {
 		this.ir = ir;
 	}
 	
+	
 }
-
