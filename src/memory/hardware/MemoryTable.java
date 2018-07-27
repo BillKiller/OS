@@ -13,6 +13,6 @@ import myUtil.Number;
 public class MemoryTable extends LinkedList<Zone>{
 
 	public MemoryTable() {
-		this.add(new Zone(0, Number.sizeOfUserArea,true));
+		this.add(new Zone(0, Number.sizeOfUserArea));
 	}
 }

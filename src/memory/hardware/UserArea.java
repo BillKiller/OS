@@ -1,7 +1,5 @@
 package memory.hardware;
 
-import java.util.LinkedList;
-
 import myUtil.Number;
 
 /**
@@ -16,14 +14,13 @@ import myUtil.Number;
  * @author Zhanbiao_Zhu
  *
  */
-
 public class UserArea {
 	private int maxSize;// 内存大小
-	private byte[] memData;// 存储数据 
+	private byte[] memory;// 存储数据
 
 	public UserArea() {
 		this.maxSize = Number.sizeOfUserArea;
-		this.memData = new byte[maxSize];
+		this.memory = new byte[maxSize];
 	}
 
 	public int getMaxSize() {
@@ -34,12 +31,11 @@ public class UserArea {
 		this.maxSize = maxSize;
 	}
 
-	public byte[] getMemData() {
-		return memData;
+	public byte[] getMemory() {
+		return memory;
 	}
 
-	public void setMemData(byte[] memData) {
-		this.memData = memData;
+	public void setMemory(byte[] memory) {
+		this.memory = memory;
 	}
-
 }
