@@ -11,6 +11,16 @@ public class Number {
 	public static int lenOfDiskBlock=64;
 	public static int lenOfDisk=256;
 	public static int sizeOfUserArea=512;
+	//进程状态
+	public static int stateReady = 0;
+	public static int stateRunning = 1;
+	public static int stateBlocking =2;
+	//中断类型
+	public static int noInterrupt = 0;
+	public static int deviceInterrupt = 1;
+	public static int timeInterrupt = 2;
+	public static int finishedInterrupt =3;
+	
 	
 	public static int byteToInt(byte num) {
 		return (num+256)%256;

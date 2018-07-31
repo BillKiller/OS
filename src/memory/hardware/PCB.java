@@ -1,9 +1,11 @@
 package memory.hardware;
 
+import java.util.HashMap;
+import java.util.Map;
 
 public class PCB {
 
-	private long pid; //进程标志符 
+	private int pid; //进程标志符 
 	private int state; //状态
 	private int priority;  //优先级
 	private int runnedTime;  //运行的时间
@@ -19,6 +21,8 @@ public class PCB {
 	private int startPos; //start代表起点
 	private int length; //length代表这个进程的大小
 
+	//保存中间结果
+	private Map<Integer, Integer> intermediaResult = new HashMap<>();
 	public PCB() {
 		
 	}
@@ -100,10 +104,10 @@ public class PCB {
 	public void setPc(int pc) {
 		this.pc = pc;
 	}
-	public long getPid() {
+	public int getPid() {
 		return pid;
 	}
-	public void setPid(long pid) {
+	public void setPid(int pid) {
 		this.pid = pid;
 	}
 	@Override
@@ -158,6 +162,12 @@ public class PCB {
 		if (waitedTime != other.waitedTime)
 			return false;
 		return true;
+	}
+	public Map<Integer, Integer> getIntermediaResult() {
+		return intermediaResult;
+	}
+	public void setIntermediaResult(Map<Integer, Integer> intermediaResult) {
+		this.intermediaResult = intermediaResult;
 	}
 
 }

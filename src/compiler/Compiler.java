@@ -1,6 +1,5 @@
 package compiler;
 
-import process.software.impl.Control;
 
 public class Compiler {
 	/**
