@@ -5,7 +5,7 @@ import process.hardware.Process;
 import process.software.impl.*;
 public class EquipmentOS {
 
-	public void apply(PCB pcb,Equipment num,int time){
+	public static void apply(PCB pcb,Equipment num,int time){
 		//申请设备
 		WaitProcess value = new WaitProcess(pcb, time);
 		if(num.getNumOfDevice()==0 || num.waitList.isEmpty()==false){
@@ -28,7 +28,7 @@ public class EquipmentOS {
 		}
 	}
 
-	public void finish(Equipment value){
+	public static void finish(Equipment value){
 		if(!value.waitList.isEmpty()){
 			WaitProcess mode = value.waitList.remove();
 			PCB pcb = mode.getPcb();
